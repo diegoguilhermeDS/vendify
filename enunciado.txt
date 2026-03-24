@@ -1,0 +1,45 @@
+Segue o desafio: 
+
+Projeto: Sistema de Pedidos de Vendas
+
+Objetivo: Desenvolver um sistema básico de crud de pedidos de vendas com API e uma aplicação frontend (usar vue3 com vite e fastify ).
+
+1. Modelo de Banco de Dados Simplificado:
+
+Tabelas:
+Produtos: id_produto, nome, preco
+Clientes: id_cliente, nome, email
+Pedidos: id_pedido, data, id_cliente
+Pedido Itens: id_pedido_item, id_pedido, id_produto, qtde, preco
+Relações:
+Produtos e Pedido Itens (um para muitos)
+Clientes e Pedidos (um para muitos)
+Pedidos e Pedido Itens (um para muitos)
+2. API RESTful:
+
+Tecnologia: js fastify / fastapi python
+Operações CRUD para:
+Produtos
+Clientes
+Pedidos (com sub-recursos para itens de pedido)
+Sem autenticação/autorização, sem DDD, sem SOLID, sem Clean Code: quero uma api simples, mas funcional
+3. Aplicação WEB Simplificada:
+
+Tecnologia: vue3 com e vite
+Interface: vuetify
+Página para listagem em data-table e CRUD de Produtos.
+Página para listagem em data-table e CRUD de Clientes.
+Página para listagem em data-table e CRUD de Pedidos e ao clicar num pedido abre a página ou modal para listagem em data-table e CRUD de itens daquele pedido selecionado na primeira tela.
+Na página para criação e visualização de Pedidos, criar um filtro permitindo selecionar clientes via dropdown.
+Na página/modal para criação e visualização de Itens Pedidos, criar um filtro permitindo selecionar produtos via dropdown.
+                             Atenção Pedidos e itens tem que ser criados numa única transação.
+
+ 
+
+ 
+
+Entregáveis:
+
+Diagrama de banco de dados modelado.
+Código fonte da API e da aplicação WEB.
+Documentação básica com instruções para que eu possa baixar do github e rodar a aplicação localmente. (se tiver um Docker compose será melhor)
