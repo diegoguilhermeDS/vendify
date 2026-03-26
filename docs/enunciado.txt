@@ -11,10 +11,12 @@ Produtos: id_produto, nome, preco
 Clientes: id_cliente, nome, email
 Pedidos: id_pedido, data, id_cliente
 Pedido Itens: id_pedido_item, id_pedido, id_produto, qtde, preco
+
 Relações:
 Produtos e Pedido Itens (um para muitos)
 Clientes e Pedidos (um para muitos)
 Pedidos e Pedido Itens (um para muitos)
+
 2. API RESTful:
 
 Tecnologia: js fastify / fastapi python
