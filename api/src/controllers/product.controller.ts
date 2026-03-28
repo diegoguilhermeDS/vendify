@@ -8,7 +8,6 @@ import {
 } from "../services/product.service.ts";
 import {
   type CreateProductInput,
-  type ProductListResponse,
   type ProductResponse,
   type UpdateProductInput,
 } from "../schemas/product.schema.ts";
@@ -25,7 +24,7 @@ export const handleCreateProduct = async (
 export const handleListProducts = async (
   request: FastifyRequest,
   reply: FastifyReply,
-): Promise<ProductListResponse> => {
+) => {
   const products = await listProducts();
 
   return reply.code(200).send(products);

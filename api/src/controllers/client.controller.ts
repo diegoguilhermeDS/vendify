@@ -16,9 +16,9 @@ export const handleListClients = async (
   request: FastifyRequest,
   reply: FastifyReply,
 ): Promise<ClientListResponse> => {
-  const Clients = await listClients();
-
-  return reply.code(200).send(Clients);
+  const clients = await listClients();
+  
+  return reply.code(200).send(clients);
 };
 
 export const handleGetClient = async (

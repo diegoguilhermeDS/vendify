@@ -10,6 +10,7 @@ import {
   createOrderItemSchema,
   updateOrderItemSchema,
   orderItemSchema,
+  orderResponseSchemaWithItens,
 } from "../schemas/order.schema.ts";
 import {
   handleAddOrderItem,
@@ -56,7 +57,7 @@ export const orderRoutes = async (fastify: FastifyInstance) => {
         tags: ["Order"],
         summary: "Get a Order by id",
         params: z.object({ id: z.string() }),
-        response: { 200: orderResponseSchema },
+        response: { 200: orderResponseSchemaWithItens },
       },
     },
     handleGetOrder,

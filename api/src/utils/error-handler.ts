@@ -20,23 +20,29 @@ export const errorHandler = (fastify: FastifyInstance) => {
 
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         if (error.code === "P2002") {
-          const target = error.meta?.target as string[];
+          const modelName = error.meta?.modelName as string;
 
-          if (target?.includes("email")) {
-            return reply.code(422).send({ error: "Email ja cadastrado." });
+          if (modelName?.includes("Client")) {
+            return reply.code(422).send({ error: "Client already exists." });
           }
 
-          return reply.code(422).send({ error: "Registro já existe." });
+          if (modelName?.includes("Product")) {
+            return reply
+              .code(422)
+              .send({ error: "Product already exists." });
+          }
+
+          return reply
+            .code(422)
+            .send({ error: "Registro já existe.", model: modelName });
         }
         if (error.code === "P2025") {
           return reply.code(404).send({ error: "Registro não encontrado." });
         }
         if (error.code === "P2003") {
-          return reply
-            .code(422)
-            .send({
-              error: "Referência inválida: registro relacionado não existe.",
-            });
+          return reply.code(404).send({
+            error: "Referência inválida: registro relacionado não existe.",
+          });
         }
       }
 

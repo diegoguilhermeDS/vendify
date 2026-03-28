@@ -1,55 +1,32 @@
-import Fastify from "fastify";
-import { productRoutes } from "./routes/product.router.ts";
-import fastifySwagger from "@fastify/swagger";
-import fastifySwaggerUi from "@fastify/swagger-ui";
-import { errorHandler } from "./utils/error-handler.ts";
-import {
-  serializerCompiler,
-  validatorCompiler,
-  jsonSchemaTransform,
-} from "fastify-type-provider-zod";
-import { clientRoutes } from "./routes/client.router.ts";
-import { orderRoutes } from "./routes/order.router.ts";
 
-const server = Fastify({
-  logger: true,
-});
+import { buildApp } from "./app.ts";
 
-errorHandler(server);
-server.setValidatorCompiler(validatorCompiler);
-server.setSerializerCompiler(serializerCompiler);
+const PORT = +(process.env.PORT || 3333);
 
-await server.register(fastifySwagger, {
-  openapi: {
-    openapi: "3.0.0",
-    info: {
-      title: "Vendify API",
-      version: "1.0.0",
-      description: "Vendify API documentation",
-    },
-  },
-  transform: jsonSchemaTransform,
-});
+const start = async () => {
+  try {
+    const server = await buildApp();
+    server.listen(
+      {
+        port: PORT,
+        host: "0.0.0.0",
+      },
+      (err, address) => {
+        if (err) {
+          console.error(err);
+          process.exit(1);
+        }
 
-await server.register(fastifySwaggerUi, {
-  routePrefix: "/docs",
-});
+        console.log("\n");
+        console.log(process.env.DATABASE_URL)
+        console.log(`Server listening at ${address}`);
+        console.log(`Docs at ${address}/docs`);
+      },
+    );
+  } catch (err) {
+    console.error("❌ Erro:", err);
+    process.exit(1);
+  }
+};
 
-server.register(productRoutes, { prefix: "/api" });
-server.register(clientRoutes, { prefix: "/api" });
-server.register(orderRoutes, { prefix: "/api" });
-
-server.listen(
-  {
-    port: 3333,
-    host: "0.0.0.0",
-  },
-  (err, address) => {
-    if (err) {
-      console.error(err);
-      process.exit(1);
-    }
-    console.log(`Server listening at ${address}`);
-    console.log(`Docs at ${address}/docs`);
-  },
-);
+start();

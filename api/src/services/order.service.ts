@@ -24,7 +24,13 @@ export const createOrder = async (payload: CreateOrderInput) => {
       },
     });
 
-    return order;
+    return {
+      ...order,
+      itens: order.itens.map((item) => ({
+        ...item,
+        price: Number(item.price),
+      })),
+    };
   } catch (error) {
     if (
       error instanceof Prisma.PrismaClientKnownRequestError &&
@@ -52,12 +58,20 @@ export const findOrderById = async (id: string) => {
           product: true,
         },
       },
+      client: true,
     },
   });
 
   if (!order) throw new NotFoundError("Order not found.");
 
-  return order;
+  return {
+    ...order,
+    itens: order.itens.map((item) => ({
+      ...item,
+      price: Number(item.price),
+      product: { ...item.product, price: Number(item.product.price) },
+    })),
+  };
 };
 
 export const getOrNotFoundOrderById = async (id: string) => {
@@ -105,12 +119,26 @@ export const deleteOrder = async (id: string) => {
 export const updateOrder = async (id: string, payload: UpdateOrderInput) => {
   await getOrNotFoundOrderById(id);
 
-  return await prisma.order.update({
-    where: {
-      id_order: id,
+  const order = await prisma.order.update({
+    where: { id_order: id },
+    data: {
+      ...(payload.id_client && { id_client: payload.id_client }),
+      ...(payload.itens && {
+        itens: {
+          deleteMany: {},
+          createMany: {
+            data: payload.itens.map((item) => ({
+              id_product: item.id_product!,
+              quantity: item.quantity!,
+              price: item.price!,
+            })),
+          },
+        },
+      }),
     },
-    data: payload as Prisma.OrderUpdateInput,
   });
+
+  return order;
 };
 
 export const listItensByOrderId = async (id: string) => {

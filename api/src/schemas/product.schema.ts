@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { Prisma } from "../../prisma/generated/prisma/client.ts";
 
 // Schema de criação
 export const createProductSchema = z.object({

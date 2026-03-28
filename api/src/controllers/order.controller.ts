@@ -8,6 +8,7 @@ import type {
   CreateOrderItemInput,
   UpdateOrderItemInput,
   OrderItemResponse,
+  OrderResponseWithItens,
 } from "../schemas/order.schema.ts";
 import {
   addItemsToOrder,
@@ -33,7 +34,7 @@ export const handleCreateOrder = async (
 export const handleListOrders = async (
   request: FastifyRequest,
   reply: FastifyReply,
-): Promise<OrderListResponse> => {
+) => {
   const orders = await listOrders();
 
   return reply.code(200).send(orders);
@@ -42,7 +43,7 @@ export const handleListOrders = async (
 export const handleGetOrder = async (
   request: FastifyRequest<{ Params: { id: string } }>,
   reply: FastifyReply,
-): Promise<OrderResponse> => {
+) => {
   const id = request.params.id;
 
   const order = await findOrderById(id);
@@ -67,6 +68,8 @@ export const handleUpdateOrder = async (
   const id = request.params.id;
 
   const order = await updateOrder(id, request.body);
+  console.log(order);
+  
 
   return reply.code(200).send(order);
 };

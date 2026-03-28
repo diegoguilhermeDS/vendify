@@ -50,7 +50,7 @@ export const deleteClient = async (id: string) => {
 
   if (hasOrders) {
     throw new ConflictError(
-      "Não é possível excluir o cliente, pois existem pedidos vinculados.",
+      "Not possible to delete a client with orders.",
     );
   }
 

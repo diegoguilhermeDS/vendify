@@ -8,9 +8,10 @@ import { ConflictError, NotFoundError } from "../erros/app-errors.ts";
 
 export const createProduct = async (payload: CreateProductInput) => {
   try {
-    return await prisma.product.create({
+    const newProduct = await prisma.product.create({
       data: { ...payload },
     });
+    return { ...newProduct, price: Number(newProduct.price) };
   } catch (error) {
     if (
       error instanceof Prisma.PrismaClientKnownRequestError &&
@@ -24,7 +25,12 @@ export const createProduct = async (payload: CreateProductInput) => {
 };
 
 export const listProducts = async () => {
-  return await prisma.product.findMany();
+  const products = await prisma.product.findMany();
+
+  return products.map((product) => ({
+    ...product,
+    price: Number(product.price),
+  }));
 };
 
 export const findProductById = async (id: string) => {
@@ -36,7 +42,7 @@ export const findProductById = async (id: string) => {
 
   if (!product) throw new NotFoundError("Product not found.");
 
-  return product;
+  return { ...product, price: Number(product.price) };
 };
 
 export const deleteProduct = async (id: string) => {
@@ -55,10 +61,12 @@ export const updateProduct = async (
 ) => {
   await findProductById(id);
 
-  return await prisma.product.update({
+  const product = await prisma.product.update({
     where: {
       id_product: id,
     },
     data: payload as Prisma.ProductUpdateInput,
   });
+
+  return { ...product, price: Number(product.price) };
 };

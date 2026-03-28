@@ -1,6 +1,7 @@
 import type { FastifyInstance } from "fastify";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
 import {
+  clientListResponse,
   clientResponseSchema,
   createClientSchema,
   updateClientSchema,
@@ -34,7 +35,7 @@ export const clientRoutes = async (fastify: FastifyInstance) => {
       schema: {
         tags: ["Client"],
         summary: "List all clients",
-        response: { 200: clientResponseSchema.array() },
+        response: { 200: clientListResponse },
       },
     },
     handleListClients,

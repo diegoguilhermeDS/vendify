@@ -9,6 +9,7 @@ import {
 } from "../controllers/product.controller.ts";
 import {
   createProductSchema,
+  productListResponse,
   productResponseSchema,
   updateProductSchema,
 } from "../schemas/product.schema.ts";
@@ -35,7 +36,7 @@ export const productRoutes = async (fastify: FastifyInstance) => {
       schema: {
         tags: ["Product"],
         summary: "List all products",
-        response: { 200: productResponseSchema.array() },
+        response: { 200: productListResponse },
       },
     },
     handleListProducts,
