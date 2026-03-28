@@ -1,20 +1,32 @@
-import Fastify from 'fastify';
 
-const server = Fastify({
-    logger: true,
-});
+import { buildApp } from "./app.ts";
 
-server.get('/', async () => {
-    return { status: 'ok' };
-});
+const PORT = +(process.env.PORT || 3333);
 
-server.listen({
-    port: 3333,
-    host: '0.0.0.0',
-}, (err, address) => {
-    if (err) {
-        console.error(err);
-        process.exit(1);
-    }
-    console.log(`Server listening at ${address}`);  
-});
+const start = async () => {
+  try {
+    const server = await buildApp();
+    server.listen(
+      {
+        port: PORT,
+        host: "0.0.0.0",
+      },
+      (err, address) => {
+        if (err) {
+          console.error(err);
+          process.exit(1);
+        }
+
+        console.log("\n");
+        console.log(process.env.DATABASE_URL)
+        console.log(`Server listening at ${address}`);
+        console.log(`Docs at ${address}/docs`);
+      },
+    );
+  } catch (err) {
+    console.error("❌ Erro:", err);
+    process.exit(1);
+  }
+};
+
+start();

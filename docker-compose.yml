@@ -19,8 +19,30 @@ services:
       - vendify_network
     restart: unless-stopped
 
+  postgres-test:
+    image: postgres:16-alpine
+    container_name: vendify_postgres_test
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB_TEST}
+      POSTGRES_USER: ${POSTGRES_USER_TEST}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_TEST}
+    ports:
+      - 5433:5432
+    volumes:
+      - pg_data_test:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER_TEST} -d ${POSTGRES_DB_TEST}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - vendify_network
+    restart: always
+  
+
 volumes:
   pg_data:
+  pg_data_test:
 
 networks:
   vendify_network:
