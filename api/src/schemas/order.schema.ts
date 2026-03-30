@@ -36,18 +36,26 @@ export const orderResponseSchema = z.object({
   id_order: z.string(),
   data: z.date(),
   id_client: z.string(),
-  // itens: z.array(orderItemSchema),
+  client: clientResponseSchema,
+  quantityItems: z.number(),
 });
 
 export const orderResponseSchemaWithItens = orderResponseSchema.extend({
-  client: clientResponseSchema,
   itens: z.array(
     orderItemSchema.extend({
       product: productResponseSchema,
       id_product: z.string(),
     }),
   ),
+}).omit({
+  quantityItems: true,
 });
+
+export const orderResponseSchemaWithoutQuantityAndClient = orderResponseSchema
+  .omit({
+    quantityItems: true,
+    client: true,
+  })
 
 // List OUTPUT
 export const orderListResponse = z.array(orderResponseSchema);
@@ -55,7 +63,7 @@ export const orderListResponse = z.array(orderResponseSchema);
 // Types derivados automaticamente
 export type CreateOrderInput = z.infer<typeof createOrderSchema>;
 export type UpdateOrderInput = z.infer<typeof updateOrderSchema>;
-export type OrderResponse = z.infer<typeof orderResponseSchema>;
+export type OrderResponse = z.infer<typeof orderResponseSchemaWithoutQuantityAndClient>;
 export type OrderResponseWithItens = z.infer<
   typeof orderResponseSchemaWithItens
 >;

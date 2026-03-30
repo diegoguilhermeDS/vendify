@@ -11,6 +11,7 @@ import {
   updateOrderItemSchema,
   orderItemSchema,
   orderResponseSchemaWithItens,
+  orderResponseSchemaWithoutQuantityAndClient,
 } from "../schemas/order.schema.ts";
 import {
   handleAddOrderItem,
@@ -32,7 +33,7 @@ export const orderRoutes = async (fastify: FastifyInstance) => {
         tags: ["Order"],
         summary: "Create a new order",
         body: createOrderSchema,
-        response: { 201: orderResponseSchema },
+        response: { 201: orderResponseSchemaWithoutQuantityAndClient },
       },
     },
     handleCreateOrder,
@@ -84,7 +85,7 @@ export const orderRoutes = async (fastify: FastifyInstance) => {
         summary: "Update a order by id",
         params: z.object({ id: z.string() }),
         body: updateOrderSchema,
-        response: { 200: orderResponseSchema },
+        response: { 200: orderResponseSchemaWithoutQuantityAndClient },
       },
     },
     handleUpdateOrder,

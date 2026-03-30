@@ -1,4 +1,5 @@
 import Fastify from "fastify";
+import cors from "@fastify/cors";
 import fastifySwagger from "@fastify/swagger";
 import fastifySwaggerUi from "@fastify/swagger-ui";
 import {
@@ -35,6 +36,11 @@ export const buildApp = async () => {
   server.get("/health", async () => ({ status: "ok" }));
   await server.register(fastifySwaggerUi, {
     routePrefix: "/docs",
+  });
+
+  await server.register(cors, {
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
   });
   server.register(productRoutes, { prefix: "/api" });
   server.register(clientRoutes, { prefix: "/api" });

@@ -40,6 +40,13 @@ export const errorHandler = (fastify: FastifyInstance) => {
           return reply.code(404).send({ error: "Registro não encontrado." });
         }
         if (error.code === "P2003") {
+          const modelName = error.meta?.modelName as string;
+          if (modelName?.includes("Product")) {
+            return reply
+              .code(422)
+              .send({ error: "Produto anexado a pedidos!" });
+          }
+
           return reply.code(404).send({
             error: "Referência inválida: registro relacionado não existe.",
           });

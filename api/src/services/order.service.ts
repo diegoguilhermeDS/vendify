@@ -44,7 +44,18 @@ export const createOrder = async (payload: CreateOrderInput) => {
 };
 
 export const listOrders = async () => {
-  return await prisma.order.findMany();
+  const orders = await prisma.order.findMany({
+    include: {
+      itens: {
+        include: {
+          product: true,
+        },
+      },
+      client: true,
+    },
+  });
+
+  return orders.map((order) => ({...order, quantityItems: order.itens.length}));
 };
 
 export const findOrderById = async (id: string) => {
