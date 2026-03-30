@@ -1,0 +1,93 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: vendify_postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - 5432:5432
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - vendify_network
+    restart: unless-stopped
+
+  postgres-test:
+    image: postgres:16-alpine
+    container_name: vendify_postgres_test
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB_TEST}
+      POSTGRES_USER: ${POSTGRES_USER_TEST}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_TEST}
+    ports:
+      - 5433:5432
+    volumes:
+      - pg_data_test:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER_TEST} -d ${POSTGRES_DB_TEST}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - vendify_network
+    restart: always
+  
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    container_name: vendify_api
+    ports:
+      - 3333:3333
+    environment:
+      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      DATABASE_URL_TEST: postgres://${POSTGRES_USER_TEST}:${POSTGRES_PASSWORD_TEST}@postgres-test:5432/${POSTGRES_DB_TEST}
+      NODE_ENV: development
+    depends_on:
+      postgres:
+        condition: service_healthy
+      postgres-test:
+        condition: service_healthy
+    networks:
+      - vendify_network
+    restart: unless-stopped
+    volumes:
+      - ./api:/app
+    working_dir: /app
+    command: sh -c "npm install && npm run dev"
+  
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    container_name: vendify_web
+    ports:
+      - 5173:5173
+    environment:
+      VITE_API_URL: http://localhost:3333/api
+      CHOKIDAR_USEPOLLING: "true"
+    depends_on:
+      - api
+    networks:
+      - vendify_network
+    restart: unless-stopped
+    volumes:
+      - ./web:/app
+      - /app/node_modules
+    working_dir: /app
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
+
+volumes:
+  pg_data:
+  pg_data_test:
+
+networks:
+  vendify_network:
+    driver: bridge
