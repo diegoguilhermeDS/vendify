@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
-import HelloWord from "../pages/HelloWord.vue";
+import { ProductPage, ClientPage, OrderPage } from "../pages";
+import DefaultLayout from "@/layouts/DefaultLayout.vue"
 
 
 const router = createRouter({
@@ -8,23 +9,25 @@ const router = createRouter({
         {
             path: "/",
             name: "home",
-            component: HelloWord
+            component: DefaultLayout,
+            children: [
+                {
+                    path: "/",
+                    name: "Produtos",
+                    component: ProductPage
+                },
+                {
+                    path: "/clientes",
+                    name: "clientes",
+                    component: ClientPage
+                },
+                {
+                    path: "/pedidos",
+                    name: "pedidos",
+                    component: OrderPage
+                }
+            ]
         },
-        {
-            path: "/produtos",
-            name: "produtos",
-            component: HelloWord
-        },
-        {
-            path: "/clientes",
-            name: "clientes",
-            component: HelloWord
-        },
-        {
-            path: "/pedidos",
-            name: "pedidos",
-            component: HelloWord
-        }
     ]
 })
 
